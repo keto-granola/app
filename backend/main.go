@@ -15,6 +15,7 @@ import (
 	productstore "github.com/keto-granola/keto-granola/internal/product/store"
 	"github.com/keto-granola/keto-granola/internal/product/web"
 	"github.com/keto-granola/keto-granola/internal/server"
+	"github.com/keto-granola/keto-granola/internal/services/auth"
 	"github.com/keto-granola/keto-granola/internal/store"
 	"github.com/keto-granola/keto-granola/internal/webassets"
 )
@@ -64,11 +65,17 @@ func run() error {
 		cfg.Environment,
 	)
 
+	authProvider, err := auth.New(ctx, cfg.Auth.Credentials)
+	if err != nil {
+		return fmt.Errorf("initialise auth provider: %w", err)
+	}
+
 	serverDeps := &server.Dependencies{
-		Environment: cfg.Environment,
-		ClientURL:   cfg.ClientURL,
-		Handlers:    handlers,
-		DataStore:   dataStore,
+		Environment:  cfg.Environment,
+		ClientURL:    cfg.ClientURL,
+		Handlers:     handlers,
+		DataStore:    dataStore,
+		AuthProvider: authProvider,
 	}
 
 	echo, err := server.New(ctx, serverDeps)

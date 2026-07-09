@@ -27,6 +27,19 @@ type App struct {
 	DbURL       string
 	LogLevel    slog.Level
 	Environment Environment
+	Auth        *Auth
+}
+
+type Config struct {
+	AuthOverride     *map[string]interface{} `json:"databaseAuthVariableOverride"`
+	DatabaseURL      string                  `json:"databaseURL"`
+	ProjectID        string                  `json:"projectId"`
+	ServiceAccountID string                  `json:"serviceAccountId"`
+	StorageBucket    string                  `json:"storageBucket"`
+}
+
+type Auth struct {
+	Credentials string
 }
 
 type Environment string
@@ -51,11 +64,12 @@ func ParseEnv() (*App, error) {
 	_ = godotenv.Load()
 
 	envVars := map[string]string{
-		"SERVER_PORT": "",
-		"DB_URL":      "",
-		"LOG_LEVEL":   "",
-		"CLIENT_URL":  "",
-		"ENVIRONMENT": "",
+		"SERVER_PORT":    "",
+		"DB_URL":         "",
+		"LOG_LEVEL":      "",
+		"CLIENT_URL":     "",
+		"ENVIRONMENT":    "",
+		"FIREBASE_CREDS": "",
 	}
 
 	for key := range envVars {
@@ -82,5 +96,8 @@ func ParseEnv() (*App, error) {
 		ClientURL:   envVars["CLIENT_URL"],
 		LogLevel:    logLevel,
 		Environment: environment,
+		Auth: &Auth{
+			Credentials: envVars["FIREBASE_CREDS"],
+		},
 	}, nil
 }

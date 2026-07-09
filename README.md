@@ -20,7 +20,10 @@ For local development, a separate Vite dev server runs for hot reload.
 ## Local Development
 
 ### Prerequisite file:
-- env (see [.env.example](.env.example))
+- .env (see [.env.example](.env.example))
+
+**Important:**
+Any env vars added to the backend repo need to be kept in sync with `.env`.
 
 ### Run everything via Docker:
 

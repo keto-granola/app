@@ -17,6 +17,7 @@ import (
 	productadmin "github.com/keto-granola/keto-granola/internal/product/admin"
 	productweb "github.com/keto-granola/keto-granola/internal/product/web"
 	"github.com/keto-granola/keto-granola/internal/server/templates/templatehelpers"
+	"github.com/keto-granola/keto-granola/internal/services/auth"
 	"github.com/keto-granola/keto-granola/internal/store"
 )
 
@@ -34,10 +35,11 @@ const (
 )
 
 type Dependencies struct {
-	Environment config.Environment
-	ClientURL   string
-	Handlers    *Handlers
-	DataStore   *store.Store
+	Environment  config.Environment
+	ClientURL    string
+	Handlers     *Handlers
+	DataStore    *store.Store
+	AuthProvider auth.AuthProvider
 }
 
 type Server struct {
@@ -82,11 +84,12 @@ func New(ctx context.Context, deps *Dependencies) (*Server, error) {
 	apiPrivate := api.Group("")
 
 	if deps.Environment == config.EnvironmentTest {
-		// TODO: run test middleware
-		slog.Info("run test middleware")
+		apiPrivate.Use(middleware.TestAuth)
 	} else {
-		// TODO: run auth middleware
-		slog.Info("run auth middleware")
+		apiPrivate.Use(
+			func(next echo.HandlerFunc) echo.HandlerFunc {
+				return middleware.Auth(next, deps.AuthProvider)
+			})
 	}
 
 	if err := registerRoutes(apiPublic, apiPrivate, web, deps.Handlers, deps.DataStore); err != nil {
