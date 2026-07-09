@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
@@ -8,7 +9,7 @@ export default defineConfig({
     manifest: true,
     rollupOptions: {
       input: {
-        main: 'src/main.tsx',
+        'add-to-cart': resolve(__dirname, 'src/islands/entries/add-to-cart.ts'),
       },
       output: {
         dir: '../backend/internal/webassets/dist',

@@ -18,7 +18,6 @@ import (
 	productweb "github.com/keto-granola/keto-granola/internal/product/web"
 	"github.com/keto-granola/keto-granola/internal/server/templates/templatehelpers"
 	"github.com/keto-granola/keto-granola/internal/store"
-	"github.com/keto-granola/keto-granola/internal/webassets"
 )
 
 const (
@@ -112,8 +111,8 @@ func (s *Server) Start(port string) error {
 	return nil
 }
 
-func NewTemplates(assetsLoader *webassets.Loader) (*template.Template, error) {
-	tmpl, err := template.New("").Funcs(templatehelpers.FuncMap(assetsLoader)).ParseFS(templateFS, "templates/**/*.html")
+func NewTemplates() (*template.Template, error) {
+	tmpl, err := template.New("").Funcs(templatehelpers.FuncMap()).ParseFS(templateFS, "templates/**/*.html")
 	if err != nil {
 		return nil, fmt.Errorf("parse templates: %w", err)
 	}

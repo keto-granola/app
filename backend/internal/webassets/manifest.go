@@ -14,6 +14,12 @@ var manifestFS embed.FS
 //go:embed dist/assets
 var assetsFS embed.FS
 
+const islandsEntryDir = "src/islands/entries/"
+
+func IslandEntryPath(name string) string {
+	return islandsEntryDir + name + ".ts"
+}
+
 type ManifestEntry struct {
 	File string   `json:"file"`
 	CSS  []string `json:"css,omitempty"`
@@ -22,11 +28,10 @@ type ManifestEntry struct {
 type Manifest map[string]ManifestEntry
 
 type Loader struct {
-	islandEntry string
-	manifest    Manifest
+	manifest Manifest
 }
 
-func New(islandEntry string) (*Loader, error) {
+func New() (*Loader, error) {
 	data, err := manifestFS.ReadFile("dist/.vite/manifest.json")
 	if err != nil {
 		return nil, fmt.Errorf("read vite manifest: %w", err)
@@ -37,22 +42,22 @@ func New(islandEntry string) (*Loader, error) {
 		return nil, fmt.Errorf("parse vite manifest: %w", err)
 	}
 
-	return &Loader{manifest: m, islandEntry: islandEntry}, nil
+	return &Loader{manifest: m}, nil
 }
 
-func (l *Loader) Asset() (string, error) {
-	entry, ok := l.manifest[l.islandEntry]
+func (l *Loader) Asset(islandEntryPath string) (string, error) {
+	entry, ok := l.manifest[islandEntryPath]
 	if !ok {
-		return "", fmt.Errorf("no manifest entry for %q", l.islandEntry)
+		return "", fmt.Errorf("no manifest entry for %q", islandEntryPath)
 	}
 
 	return "/" + entry.File, nil
 }
 
-func (l *Loader) AssetCSS() ([]string, error) {
-	entry, ok := l.manifest[l.islandEntry]
+func (l *Loader) AssetCSS(islandEntryPath string) ([]string, error) {
+	entry, ok := l.manifest[islandEntryPath]
 	if !ok {
-		return nil, fmt.Errorf("no manifest entry for %q", l.islandEntry)
+		return nil, fmt.Errorf("no manifest entry for %q", islandEntryPath)
 	}
 
 	out := make([]string, len(entry.CSS))
