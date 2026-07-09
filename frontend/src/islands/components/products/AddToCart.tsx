@@ -1,7 +1,5 @@
 import { useState } from 'react'
 
-import { mountIsland } from '../mount'
-
 interface AddToCartProps {
   productId: string
 }
@@ -22,18 +20,4 @@ export function AddToCart({ productId }: AddToCartProps) {
       <button onClick={() => addToCart(productId, quantity)}>Add to cart</button>
     </div>
   )
-}
-
-const el = document.getElementById('add-to-cart')
-if (el) {
-  const productId = el.dataset.productId
-  if (!productId) {
-    throw new Error('missing product id')
-  }
-
-  mountIsland({
-    el,
-    Component: AddToCart,
-    props: { productId },
-  })
 }

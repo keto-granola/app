@@ -5,15 +5,12 @@ import (
 	"html/template"
 
 	"github.com/keto-granola/keto-granola/internal/product"
-	"github.com/keto-granola/keto-granola/internal/webassets"
 )
 
-func FuncMap(assetsLoader *webassets.Loader) template.FuncMap {
+func FuncMap() template.FuncMap {
 	return template.FuncMap{
 		"ingredientList": ingredientList,
 		"centsToPrice":   centsToPrice,
-		"asset":          assetsLoader.Asset,
-		"assetCSS":       assetsLoader.AssetCSS,
 	}
 }
 

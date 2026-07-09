@@ -19,8 +19,6 @@ const (
 	APIPrefix   = "api"
 	APIVersion  = "v1"
 	APIBasePath = "/" + APIPrefix + "/" + APIVersion
-
-	IslandEntry = "src/main.tsx"
 )
 
 type App struct {

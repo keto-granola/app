@@ -46,17 +46,17 @@ func run() error {
 	}
 	defer dataStore.Close()
 
-	assetsLoader, err := webassets.New(config.IslandEntry)
+	assetsLoader, err := webassets.New()
 	if err != nil {
 		return fmt.Errorf("init asset loader: %w", err)
 	}
 
-	templates, err := server.NewTemplates(assetsLoader)
+	templates, err := server.NewTemplates()
 	if err != nil {
 		return fmt.Errorf("create templates: %w", err)
 	}
 
-	handlers := composeHandlers(dataStore, templates, cfg.ClientURL, cfg.Environment)
+	handlers := composeHandlers(dataStore, templates, assetsLoader, cfg.ClientURL, cfg.Environment)
 
 	serverDeps := &server.Dependencies{
 		Environment: cfg.Environment,
@@ -89,13 +89,13 @@ func run() error {
 	return err
 }
 
-func composeHandlers(db *store.Store, tmpl *template.Template, clientURL string, env config.Environment) *server.Handlers {
+func composeHandlers(db *store.Store, tmpl *template.Template, assetsLoader *webassets.Loader, clientURL string, env config.Environment) *server.Handlers {
 	productStore := productstore.New(db.Queries)
 	prodService := product.NewService(productStore)
 	prodAdminService := productadmin.NewService(productStore)
 
 	return &server.Handlers{
 		ProductAdmin: productadmin.NewHandler(prodAdminService),
-		Product:      web.NewHandler(prodService, tmpl, clientURL, env),
+		Product:      web.NewHandler(prodService, assetsLoader, tmpl, clientURL, env),
 	}
 }
