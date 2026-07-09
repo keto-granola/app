@@ -45,9 +45,7 @@ func New() (*Loader, error) {
 	return &Loader{manifest: m}, nil
 }
 
-func (l *Loader) Asset(name string) (string, error) {
-	islandEntryPath := IslandEntryPath(name)
-
+func (l *Loader) Asset(islandEntryPath string) (string, error) {
 	entry, ok := l.manifest[islandEntryPath]
 	if !ok {
 		return "", fmt.Errorf("no manifest entry for %q", islandEntryPath)
@@ -56,9 +54,7 @@ func (l *Loader) Asset(name string) (string, error) {
 	return "/" + entry.File, nil
 }
 
-func (l *Loader) AssetCSS(name string) ([]string, error) {
-	islandEntryPath := IslandEntryPath(name)
-
+func (l *Loader) AssetCSS(islandEntryPath string) ([]string, error) {
 	entry, ok := l.manifest[islandEntryPath]
 	if !ok {
 		return nil, fmt.Errorf("no manifest entry for %q", islandEntryPath)

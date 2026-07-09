@@ -11,7 +11,7 @@
     </script>
     <script type="module" src="{{ printf "%s/@vite/client" .ClientURL }}"></script>
   {{ else }}
-    {{ range assetCSS }}
+    {{ range .AssetCSS }}
       <link rel="stylesheet" href="{{ . }}">
     {{ end }}
   {{ end }}
