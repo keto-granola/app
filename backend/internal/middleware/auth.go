@@ -1,3 +1,3 @@
 package middleware
 
-func AuthMiddlware()
+func AuthMiddlware() {}

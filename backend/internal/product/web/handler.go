@@ -28,7 +28,12 @@ type ProductData struct {
 	AssetCSS  []string
 }
 
-func NewHandler(svc *product.Service, assetsLoader *webassets.Loader, tmpl *template.Template, clientURL string, env config.Environment) *Handler {
+func NewHandler(svc *product.Service,
+	assetsLoader *webassets.Loader,
+	tmpl *template.Template,
+	clientURL string,
+	env config.Environment,
+) *Handler {
 	return &Handler{
 		service:      svc,
 		templates:    tmpl,

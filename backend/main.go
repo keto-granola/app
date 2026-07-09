@@ -56,7 +56,13 @@ func run() error {
 		return fmt.Errorf("create templates: %w", err)
 	}
 
-	handlers := composeHandlers(dataStore, templates, assetsLoader, cfg.ClientURL, cfg.Environment)
+	handlers := composeHandlers(
+		dataStore,
+		templates,
+		assetsLoader,
+		cfg.ClientURL,
+		cfg.Environment,
+	)
 
 	serverDeps := &server.Dependencies{
 		Environment: cfg.Environment,
@@ -89,7 +95,13 @@ func run() error {
 	return err
 }
 
-func composeHandlers(db *store.Store, tmpl *template.Template, assetsLoader *webassets.Loader, clientURL string, env config.Environment) *server.Handlers {
+func composeHandlers(
+	db *store.Store,
+	tmpl *template.Template,
+	assetsLoader *webassets.Loader,
+	clientURL string,
+	env config.Environment,
+) *server.Handlers {
 	productStore := productstore.New(db.Queries)
 	prodService := product.NewService(productStore)
 	prodAdminService := productadmin.NewService(productStore)
