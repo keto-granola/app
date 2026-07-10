@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
+
 	"github.com/keto-granola/keto-granola/internal/services/auth"
 )
 
