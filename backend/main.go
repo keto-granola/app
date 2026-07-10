@@ -65,17 +65,20 @@ func run() error {
 		cfg.Environment,
 	)
 
-	authProvider, err := auth.New(ctx, cfg.Auth.Credentials)
-	if err != nil {
-		return fmt.Errorf("initialise auth provider: %w", err)
+	serverDeps := &server.Dependencies{
+		Environment: cfg.Environment,
+		ClientURL:   cfg.ClientURL,
+		Handlers:    handlers,
+		DataStore:   dataStore,
 	}
 
-	serverDeps := &server.Dependencies{
-		Environment:  cfg.Environment,
-		ClientURL:    cfg.ClientURL,
-		Handlers:     handlers,
-		DataStore:    dataStore,
-		AuthProvider: authProvider,
+	if cfg.Environment != config.EnvironmentCI {
+		authProvider, err := auth.New(ctx, cfg.Auth.Credentials)
+		if err != nil {
+			return fmt.Errorf("initialise auth provider: %w", err)
+		}
+
+		serverDeps.AuthProvider = authProvider
 	}
 
 	echo, err := server.New(ctx, serverDeps)

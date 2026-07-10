@@ -24,4 +24,6 @@ jobs:
 
       - name: Teardown
         if: always()
-        run: docker compose -f docker-compose.ci.yml down -v
+        run: |
+          docker compose -f docker-compose.ci.yml logs keto-granola-server
+          docker compose -f docker-compose.ci.yml down -v
