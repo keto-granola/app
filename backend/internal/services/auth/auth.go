@@ -2,8 +2,9 @@ package auth
 
 import (
 	"context"
+	"fmt"
 
-	"firebase.google.com/go/v4"
+	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
 	"google.golang.org/api/option"
 )
@@ -11,14 +12,22 @@ import (
 type Token string
 type Role string
 
-const adminRole Role = "admin"
+type ContextKey string
+
+const (
+	AdminRole Role = "admin"
+	UserRole  Role = "user"
+
+	UserIDContextKey ContextKey = "userID"
+	RoleContextKey   ContextKey = "role"
+)
 
 type Auth struct {
 	client *auth.Client
 }
 
 type AuthProvider interface {
-	GetUserFromIDToken(ctx context.Context, token string) (*User, error)
+	GetUserByToken(ctx context.Context, token string) (*User, error)
 }
 
 type User struct {
@@ -44,7 +53,7 @@ func New(ctx context.Context, credentials string) (*Auth, error) {
 	}, nil
 }
 
-func (a *Auth) GetUserFromIDToken(ctx context.Context, accessToken string) (*User, error) {
+func (a *Auth) GetUserByToken(ctx context.Context, accessToken string) (*User, error) {
 	token, err := a.client.VerifyIDToken(ctx, accessToken)
 	if err != nil {
 		return nil, err
@@ -57,16 +66,42 @@ func (a *Auth) GetUserFromIDToken(ctx context.Context, accessToken string) (*Use
 
 	return &User{
 		ID:      userRecord.UID,
-		IsAdmin: isAdmin(token),
+		IsAdmin: isAdminFromToken(token),
 	}, nil
 }
 
-func isAdmin(token *auth.Token) bool {
-	adminValue, ok := token.Claims[string(adminRole)]
+func isAdminFromToken(token *auth.Token) bool {
+	adminValue, ok := token.Claims[string(AdminRole)]
 	if !ok {
 		return false
 	}
 
 	isAdmin, ok := adminValue.(bool)
 	return ok && isAdmin
+}
+
+func (a *Auth) GetUserIDByEmail(ctx context.Context, email string) (userID string, err error) {
+	user, err := a.client.GetUserByEmail(ctx, email)
+	if err != nil {
+		return "", err
+	}
+
+	return user.UID, nil
+}
+
+func (a *Auth) SetAdminRole(ctx context.Context, userID string, makeAdmin bool) error {
+	return a.client.SetCustomUserClaims(ctx, userID, map[string]any{
+		"admin": makeAdmin,
+	})
+}
+
+func (a *Auth) IsAdminFromUserID(ctx context.Context, userID string) (bool, error) {
+	user, err := a.client.GetUser(ctx, userID)
+	if err != nil {
+		return false, fmt.Errorf("get user: %v", err)
+	}
+
+	admin, _ := user.CustomClaims["admin"].(bool)
+
+	return admin, nil
 }

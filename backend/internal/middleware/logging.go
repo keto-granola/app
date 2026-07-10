@@ -15,6 +15,7 @@ import (
 
 	"github.com/keto-granola/keto-granola/internal/apperr"
 	"github.com/keto-granola/keto-granola/internal/config"
+	"github.com/keto-granola/keto-granola/internal/services/auth"
 )
 
 func Log(next echo.HandlerFunc) echo.HandlerFunc {
@@ -51,6 +52,18 @@ func Log(next echo.HandlerFunc) echo.HandlerFunc {
 			slog.String("params", allParams),
 			slog.Int64("latency_ms", latency.Milliseconds()),
 			slog.String("ip", e.RealIP()),
+		}
+
+		if uid := e.Request().Context().Value(auth.UserIDContextKey); uid != nil {
+			if u, ok := uid.(string); ok {
+				attrs = append(attrs, slog.String("user_id", u))
+			}
+		}
+
+		if role := e.Request().Context().Value(auth.RoleContextKey); role != nil {
+			if r, ok := role.(string); ok {
+				attrs = append(attrs, slog.String("role", r))
+			}
 		}
 
 		if len(bodyBytes) > 0 {
