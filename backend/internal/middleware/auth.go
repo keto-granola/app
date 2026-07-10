@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"log/slog"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -19,7 +18,6 @@ func Auth(next echo.HandlerFunc, authProvider auth.AuthProvider) echo.HandlerFun
 
 		const prefix = "Bearer "
 		if !strings.HasPrefix(authHeader, prefix) {
-			slog.Warn("missing or invalid auth token")
 			return apperr.ToHTTPError(apperr.Unauthorised("Middleware.Auth", "unauthorised"))
 		}
 
@@ -28,12 +26,10 @@ func Auth(next echo.HandlerFunc, authProvider auth.AuthProvider) echo.HandlerFun
 		user, err := authProvider.GetUserByToken(ctx, token)
 
 		if err != nil {
-			slog.Warn("get user from token", slog.Any("error", err))
 			return apperr.ToHTTPError(apperr.Unauthorised("Middleware.Auth", "unauthorised"))
 		}
 
 		if user == nil {
-			slog.Warn("user not found from token")
 			return apperr.ToHTTPError(apperr.Unauthorised("Middleware.Auth", "unauthorised"))
 		}
 

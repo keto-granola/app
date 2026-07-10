@@ -98,7 +98,7 @@ func (a *Auth) SetAdminRole(ctx context.Context, userID string, makeAdmin bool) 
 func (a *Auth) IsAdminFromUserID(ctx context.Context, userID string) (bool, error) {
 	user, err := a.client.GetUser(ctx, userID)
 	if err != nil {
-		return false, fmt.Errorf("get user: %v", err)
+		return false, fmt.Errorf("get user: %w", err)
 	}
 
 	admin, _ := user.CustomClaims["admin"].(bool)
