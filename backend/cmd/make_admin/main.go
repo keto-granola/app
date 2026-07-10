@@ -20,9 +20,6 @@ const (
 )
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
-	defer cancel()
-
 	err := godotenv.Load()
 	if err != nil {
 		slog.Error("load .env file", slog.Any("error", err))
@@ -32,13 +29,16 @@ func main() {
 	flag.BoolVar(&makeAdmin, "make-admin", makeAdmin, "Make admin if true/remove admin status if false")
 	flag.Parse()
 
-	if err := run(ctx, os.Getenv("FIREBASE_CREDS"), makeAdmin); err != nil {
+	if err := run(os.Getenv("FIREBASE_CREDS"), makeAdmin); err != nil {
 		slog.Error("run failed", slog.Any("error", err))
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, creds string, makeAdmin bool) error {
+func run(creds string, makeAdmin bool) error {
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
+	defer cancel()
+
 	if creds == "" {
 		return fmt.Errorf("FIREBASE_CREDS is not set")
 	}
@@ -56,7 +56,7 @@ func run(ctx context.Context, creds string, makeAdmin bool) error {
 		return fmt.Errorf("email is required")
 	}
 
-	fmt.Printf("About to set admin=%w for %s. Continue? [y/n]: ", makeAdmin, email)
+	fmt.Printf("About to set admin=%t for %s. Continue? [y/n]: ", makeAdmin, email)
 	confirm, err := reader.ReadString('\n')
 	if err != nil {
 		return fmt.Errorf("read confirmation: %w", err)
@@ -86,7 +86,7 @@ func run(ctx context.Context, creds string, makeAdmin bool) error {
 		return fmt.Errorf("verify admin status %w", err)
 	}
 	if isAdmin != makeAdmin {
-		return fmt.Errorf("admin status mismatch after update: want %w, got %w", makeAdmin, isAdmin)
+		return fmt.Errorf("admin status mismatch after update: want %t, got %t", makeAdmin, isAdmin)
 	}
 
 	slog.Info("updated user admin status", slog.String("email", email), slog.Bool("make_admin", makeAdmin))

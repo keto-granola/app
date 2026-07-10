@@ -54,22 +54,22 @@ func main() {
 		verbose  bool
 	)
 
-	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
-	defer cancel()
-
 	flag.StringVar(&apiKey, "api-key", "", "Firebase Web API Key (required)")
 	flag.StringVar(&email, "email", "", "User email address (required)")
 	flag.StringVar(&password, "password", "", "User password (required)")
 	flag.BoolVar(&verbose, "verbose", false, "Show verbose output including token details")
 	flag.Parse()
 
-	if err := run(ctx, apiKey, email, password, verbose); err != nil {
+	if err := run(apiKey, email, password, verbose); err != nil {
 		slog.Error("run failed", slog.Any("error", err))
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, apiKey, email, password string, verbose bool) error {
+func run(apiKey, email, password string, verbose bool) error {
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
+	defer cancel()
+
 	if apiKey == "" || email == "" || password == "" {
 		flag.Usage()
 		return fmt.Errorf("api-key, email and password are required")
@@ -100,7 +100,7 @@ func getAccessToken(ctx context.Context, apiKey, email, password string) (*signI
 		ReturnSecureToken: true,
 	}
 
-	jsonData, err := json.Marshal(reqBody)
+	jsonData, err := json.Marshal(reqBody) //nolint:gosec // G117: password is intentionally sent to Firebase auth endpoint
 	if err != nil {
 		return nil, fmt.Errorf("marshal request: %w", err)
 	}
