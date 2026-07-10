@@ -6,12 +6,8 @@ services:
     container_name: keto-granola-server
     ports:
       - "3001:3001"
-    environment:
-      DB_URL: postgres://ci:ci@postgres:5432/keto-granola-ci?sslmode=disable
-      SERVER_PORT: 3001
-      LOG_LEVEL: error
-      ENVIRONMENT: ci
-      CLIENT_URL: http://localhost:5173
+    env_file:
+      - .env.ci
     depends_on:
       postgres:
         condition: service_healthy

@@ -25,7 +25,7 @@ go run cmd/access_token/main.go -api-key=<firebase_web_api_key> -email=<email> -
 Use the token in a curl request:
 ```bash
 TOKEN=$(go run cmd/access_token/main.go -api-key=AIza... -email=test@example.com -password=pass123)
-curl -X POST http://localhost:3001/v1/admin/products \
+curl -X POST http://localhost:3001/api/v1/admin/products \
   -H "Content-Type: application/json" \
   -d "{\"access_token\": \"$TOKEN\"}"
 ```

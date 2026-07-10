@@ -23,7 +23,8 @@ For local development, a separate Vite dev server runs for hot reload.
 - .env (see [.env.example](.env.example))
 
 **Important:**
-Any env vars added to the backend repo need to be kept in sync with `.env`.
+- Any new env vars need to be added to `/backend/.env` and `.env.ci`
+- Use dummy values for `env.ci` 
 
 ### Run everything via Docker:
 
