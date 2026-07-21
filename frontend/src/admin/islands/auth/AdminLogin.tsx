@@ -4,7 +4,7 @@ function AdminLogin() {
   const navigate = useNavigate()
 
   const onHandleLogin = () => {
-    void navigate('admin/products')
+    void navigate('/products')
   }
 
   return (

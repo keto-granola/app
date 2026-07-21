@@ -7,7 +7,7 @@ function RequireAdmin({ children }: PropsWithChildren) {
   const { token } = useAuth()
 
   if (!token) {
-    return <Navigate to="/admin/login" />
+    return <Navigate to="/login" />
   }
 
   return children

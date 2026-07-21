@@ -17,9 +17,6 @@
       <link rel="stylesheet" href="{{ . }}">
     {{ end }}
   {{ end }}
-
-  {{ range .EntryPoints }}
-    <script type="module" src="{{ . }}"></script>
-  {{ end }}
+  <script type="module" src="{{ .AssetSrc }}"></script>
 </head>
 {{ end }}

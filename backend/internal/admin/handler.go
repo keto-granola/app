@@ -39,7 +39,7 @@ func NewHandler(
 }
 
 func (h *Handler) ServeShell(e echo.Context) error {
-	const adminEntryPath = "src/admin/entries/admin.tsx"
+	const adminEntryPath = "src/admin/islands/entries/admin.tsx"
 	asset, err := webassets.ResolveEntry(h.assetsLoader, adminEntryPath, h.clientURL, h.devEnv)
 	if err != nil {
 		return apperr.ToHTTPError(err)
