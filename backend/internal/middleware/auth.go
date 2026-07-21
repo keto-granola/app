@@ -23,7 +23,7 @@ func Auth(next echo.HandlerFunc, authProvider auth.AuthProvider) echo.HandlerFun
 
 		token := strings.TrimPrefix(authHeader, prefix)
 
-		user, err := authProvider.GetUserByToken(ctx, token)
+		user, err := authProvider.GetUserFromToken(ctx, token)
 
 		if err != nil {
 			return apperr.ToHTTPError(apperr.Unauthorised("Middleware.Auth", "unauthorised"))

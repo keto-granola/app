@@ -54,29 +54,18 @@ func (h *Handler) GetProductPage(e echo.Context) error {
 		return apperr.ToHTTPError(err)
 	}
 
-	islandEntryPath := webassets.IslandEntryPath("add-to-cart")
-
-	var assetSrc string
-	var assetCSS []string
-
-	if h.devEnv {
-		assetSrc = h.clientURL + "/" + islandEntryPath
-	} else {
-		if assetSrc, err = h.assetsLoader.Asset(islandEntryPath); err != nil {
-			return apperr.ToHTTPError(err)
-		}
-
-		if assetCSS, err = h.assetsLoader.AssetCSS(islandEntryPath); err != nil {
-			return apperr.ToHTTPError(err)
-		}
+	const islandEntryPath = "src/public/islands/entries/add-to-cart.ts"
+	asset, err := webassets.ResolveEntry(h.assetsLoader, islandEntryPath, h.clientURL, h.devEnv)
+	if err != nil {
+		return apperr.ToHTTPError(err)
 	}
 
 	productData := &ProductData{
 		Product:   prod,
 		ClientURL: h.clientURL,
 		DevEnv:    h.devEnv,
-		AssetSrc:  assetSrc,
-		AssetCSS:  assetCSS,
+		AssetSrc:  asset.Src,
+		AssetCSS:  asset.CSS,
 	}
 
 	return h.templates.ExecuteTemplate(e.Response(), "product.html", productData)

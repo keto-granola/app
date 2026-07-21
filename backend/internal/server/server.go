@@ -12,6 +12,7 @@ import (
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 
+	"github.com/keto-granola/keto-granola/internal/admin"
 	"github.com/keto-granola/keto-granola/internal/config"
 	"github.com/keto-granola/keto-granola/internal/middleware"
 	productadmin "github.com/keto-granola/keto-granola/internal/product/admin"
@@ -52,6 +53,7 @@ type Handlers struct {
 
 	// web handlers
 	Product *productweb.Handler
+	Admin   *admin.Handler
 }
 
 //go:embed templates

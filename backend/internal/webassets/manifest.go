@@ -14,12 +14,6 @@ var manifestFS embed.FS
 //go:embed dist/assets
 var assetsFS embed.FS
 
-const islandsEntryDir = "src/islands/entries/"
-
-func IslandEntryPath(name string) string {
-	return islandsEntryDir + name + ".ts"
-}
-
 type ManifestEntry struct {
 	File string   `json:"file"`
 	CSS  []string `json:"css,omitempty"`

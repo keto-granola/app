@@ -25,17 +25,17 @@ func main() {
 		slog.Error("load .env file", slog.Any("error", err))
 	}
 
-	var makeAdmin bool
-	flag.BoolVar(&makeAdmin, "make-admin", makeAdmin, "Make admin if true/remove admin status if false")
+	var setAdmin bool
+	flag.BoolVar(&setAdmin, "set-admin", setAdmin, "Set admin if true/remove admin status if false")
 	flag.Parse()
 
-	if err := run(os.Getenv("FIREBASE_CREDS"), makeAdmin); err != nil {
+	if err := run(os.Getenv("FIREBASE_CREDS"), setAdmin); err != nil {
 		slog.Error("run failed", slog.Any("error", err))
 		os.Exit(1)
 	}
 }
 
-func run(creds string, makeAdmin bool) error {
+func run(creds string, setAdmin bool) error {
 	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 
@@ -56,7 +56,7 @@ func run(creds string, makeAdmin bool) error {
 		return fmt.Errorf("email is required")
 	}
 
-	fmt.Printf("About to set admin=%t for %s. Continue? [y/n]: ", makeAdmin, email)
+	fmt.Printf("About to set admin=%t for %s. Continue? [y/n]: ", setAdmin, email)
 	confirm, err := reader.ReadString('\n')
 	if err != nil {
 		return fmt.Errorf("read confirmation: %w", err)
@@ -76,7 +76,7 @@ func run(creds string, makeAdmin bool) error {
 	}
 	slog.Info("fetched userID", slog.String("email", email), slog.String("id", userID))
 
-	err = authProv.SetAdminRole(ctx, userID, makeAdmin)
+	err = authProv.SetAdminRole(ctx, userID, setAdmin)
 	if err != nil {
 		return fmt.Errorf("update user admin status %w", err)
 	}
@@ -85,10 +85,10 @@ func run(creds string, makeAdmin bool) error {
 	if err != nil {
 		return fmt.Errorf("verify admin status %w", err)
 	}
-	if isAdmin != makeAdmin {
-		return fmt.Errorf("admin status mismatch after update: want %t, got %t", makeAdmin, isAdmin)
+	if isAdmin != setAdmin {
+		return fmt.Errorf("admin status mismatch after update: want %t, got %t", setAdmin, isAdmin)
 	}
 
-	slog.Info("updated user admin status", slog.String("email", email), slog.Bool("make_admin", makeAdmin))
+	slog.Info("updated user admin status", slog.String("email", email), slog.Bool("set_admin", setAdmin))
 	return nil
 }

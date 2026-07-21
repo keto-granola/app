@@ -1,0 +1,25 @@
+{{ define "head" }}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keto Granola</title>
+  {{ if .DevEnv }}
+    <script type="module">
+      import RefreshRuntime from "{{ .ClientURL }}/@react-refresh"
+      RefreshRuntime.injectIntoGlobalHook(window)
+      window.$RefreshReg$ = () => {}
+      window.$RefreshSig$ = () => (type) => type
+      window.__vite_plugin_react_preamble_installed__ = true
+    </script>
+    <script type="module" src="{{ printf "%s/@vite/client" .ClientURL }}"></script>
+  {{ else }}
+    {{ range .AssetCSS }}
+      <link rel="stylesheet" href="{{ . }}">
+    {{ end }}
+  {{ end }}
+
+  {{ range .EntryPoints }}
+    <script type="module" src="{{ . }}"></script>
+  {{ end }}
+</head>
+{{ end }}

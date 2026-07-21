@@ -19,7 +19,10 @@ For local development, a separate Vite dev server runs for hot reload.
 
 ## Local Development
 
-### Prerequisite file:
+### Prerequisites
+
+- A Firebase user with admin privileges: run the [setadmin](./backend/cmd/setadmin) CLI script before attempting to log into `/admin`
+- A Firebase token for `/admin/*` routes: run the [accesstoken](./backend/cmd/accesstoken/) CLI script for testing admin API endpoints directly
 - .env (see [.env.example](.env.example))
 
 **Important:**

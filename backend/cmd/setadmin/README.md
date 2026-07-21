@@ -1,22 +1,23 @@
-# Make admin Firebase tool
+# Set admin Firebase tool
 
 Used to update the user's admin status (i.e. make user admin/remove admin status) on Firebase.
 
 ### Prerequisites
 
-`FIREBASE_CREDS` variable in `.env` file.
+- A Firebase user (manually created on the Firebase console)
+- `FIREBASE_CREDS` set in `.env` file.
 
 ### Usage
 
 Make user admin:
 
 ```bash
-go run cmd/make_admin/main.go -make-admin=true
+go run cmd/setadmin/main.go -set-admin=true
 ```
 
 Remove user admin status:
 
 ```bash
-go run cmd/make_admin/main.go
+go run cmd/setadmin/main.go
 ```
 

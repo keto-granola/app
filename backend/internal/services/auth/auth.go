@@ -27,7 +27,7 @@ type Auth struct {
 }
 
 type AuthProvider interface {
-	GetUserByToken(ctx context.Context, token string) (*User, error)
+	GetUserFromToken(ctx context.Context, token string) (*User, error)
 }
 
 type User struct {
@@ -53,31 +53,18 @@ func New(ctx context.Context, credentials string) (*Auth, error) {
 	}, nil
 }
 
-func (a *Auth) GetUserByToken(ctx context.Context, accessToken string) (*User, error) {
+func (a *Auth) GetUserFromToken(ctx context.Context, accessToken string) (*User, error) {
 	token, err := a.client.VerifyIDToken(ctx, accessToken)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("verify id token: %w", err)
 	}
 
-	userRecord, err := a.client.GetUser(ctx, token.UID)
-	if err != nil {
-		return nil, err
-	}
+	isAdmin, _ := token.Claims[string(AdminRole)].(bool)
 
 	return &User{
-		ID:      userRecord.UID,
-		IsAdmin: isAdminFromToken(token),
+		ID:      token.UID,
+		IsAdmin: isAdmin,
 	}, nil
-}
-
-func isAdminFromToken(token *auth.Token) bool {
-	adminValue, ok := token.Claims[string(AdminRole)]
-	if !ok {
-		return false
-	}
-
-	isAdmin, ok := adminValue.(bool)
-	return ok && isAdmin
 }
 
 func (a *Auth) GetUserIDByEmail(ctx context.Context, email string) (userID string, err error) {
@@ -89,9 +76,9 @@ func (a *Auth) GetUserIDByEmail(ctx context.Context, email string) (userID strin
 	return user.UID, nil
 }
 
-func (a *Auth) SetAdminRole(ctx context.Context, userID string, makeAdmin bool) error {
+func (a *Auth) SetAdminRole(ctx context.Context, userID string, setAdmin bool) error {
 	return a.client.SetCustomUserClaims(ctx, userID, map[string]any{
-		"admin": makeAdmin,
+		"admin": setAdmin,
 	})
 }
 

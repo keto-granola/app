@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/keto-granola/keto-granola/internal/admin"
 	"github.com/keto-granola/keto-granola/internal/config"
 	"github.com/keto-granola/keto-granola/internal/product"
 	productadmin "github.com/keto-granola/keto-granola/internal/product/admin"
@@ -115,9 +116,11 @@ func composeHandlers(
 	productStore := productstore.New(db.Queries)
 	prodService := product.NewService(productStore)
 	prodAdminService := productadmin.NewService(productStore)
+	adminHandler := admin.NewHandler(assetsLoader, tmpl, clientURL, env)
 
 	return &server.Handlers{
 		ProductAdmin: productadmin.NewHandler(prodAdminService),
 		Product:      web.NewHandler(prodService, assetsLoader, tmpl, clientURL, env),
+		Admin:        adminHandler,
 	}
 }

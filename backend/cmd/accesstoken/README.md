@@ -1,6 +1,3 @@
-
-
-
 # Get access token Firebase tool (for testing)
 
 Used to fetch an access token from Firebase for API authentication.
