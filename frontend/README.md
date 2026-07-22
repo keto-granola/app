@@ -5,7 +5,7 @@ React client for keto granola e-commerce platform using:
 - React
 - Typescript
 - Vite
-- TanStack (queries)
+- TanStack (routing & queries)
 - shadcn/ui (UI framework)
 - Zod (validation)
 
@@ -23,6 +23,8 @@ make dep
 ```
 make run
 ```
+
+**Note:** There's no `index.html`, so opening `localhost:5173` directly in a browser won't show anything. Just view the app through the Go server (`localhost:3001`) after Vite is running.
 
 ### Lint:
 ```

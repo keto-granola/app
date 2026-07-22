@@ -12,6 +12,11 @@ Keto granola server using:
 - `.env` file
 - postgres DB running via docker. See [root README.md](../README.md)
 
+**Important**:
+Any new env vars need to be added to both root files:
+- `.env`
+- `.env.ci` (use dummy values)
+
 ### Setup:
 ```
 make dep

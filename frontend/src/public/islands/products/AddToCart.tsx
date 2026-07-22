@@ -4,7 +4,7 @@ interface AddToCartProps {
   productId: string
 }
 
-export function AddToCart({ productId }: AddToCartProps) {
+function AddToCart({ productId }: AddToCartProps) {
   const [quantity, setQuantity] = useState<number>(1)
 
   const addToCart = (productId: string, quantity: number) => {
@@ -21,3 +21,5 @@ export function AddToCart({ productId }: AddToCartProps) {
     </div>
   )
 }
+
+export default AddToCart

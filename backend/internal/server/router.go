@@ -61,10 +61,18 @@ func registerAssetRoutes(web *echo.Group) error {
 }
 
 func registerAPIRoutes(apiPrivate *echo.Group, handlers *Handlers) {
-	// admin routes
-	apiPrivate.POST("/admin/products", Handle(handlers.ProductAdmin.CreateProduct, http.StatusCreated))
+	registerProductAdminRoutes(apiPrivate, handlers)
+}
+
+func registerProductAdminRoutes(apiPrivate *echo.Group, handlers *Handlers) {
+	products := apiPrivate.Group("/admin/products")
+
+	products.POST("", Handle(handlers.ProductAdmin.CreateProduct, http.StatusCreated))
 }
 
 func registerWebRoutes(web *echo.Group, handlers *Handlers) {
 	web.GET("products/:id", handlers.Product.GetProductPage)
+
+	web.GET("/admin", handlers.Admin.ServeShell)
+	web.GET("/admin/*", handlers.Admin.ServeShell)
 }

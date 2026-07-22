@@ -19,8 +19,15 @@ For local development, a separate Vite dev server runs for hot reload.
 
 ## Local Development
 
-### Prerequisite file:
-- env (see [.env.example](.env.example))
+### Prerequisites
+
+- A Firebase user with admin privileges: run the [setadmin](./backend/cmd/setadmin) CLI script before attempting to log into `/admin`
+- A Firebase token for `/admin/*` routes: run the [accesstoken](./backend/cmd/accesstoken/) CLI script for testing admin API endpoints directly
+- .env (see [.env.example](.env.example))
+
+**Important:**
+- Any new env vars need to be added to `/backend/.env` and `.env.ci`
+- Use dummy values for `env.ci` 
 
 ### Run everything via Docker:
 
