@@ -1,9 +1,9 @@
 services:
-  keto-granola-server:
+  keto-granola-app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: keto-granola-server
+    container_name: keto-granola-app
     ports:
       - "3001:3001"
     env_file:
