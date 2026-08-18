@@ -16,9 +16,9 @@ jobs:
 
       - name: Wait for app healthy
         run: |
-          docker compose -f docker-compose.ci.yml logs -f keto-granola-server &
+          docker compose -f docker-compose.ci.yml logs -f keto-granola-app &
           timeout 120 bash -c \
-          'until [ "$(docker inspect --format={{.State.Health.Status}} keto-granola-server)" = "healthy" ]; do sleep 2; done'
+          'until [ "$(docker inspect --format={{.State.Health.Status}} keto-granola-app)" = "healthy" ]; do sleep 2; done'
 
       - name: Smoke test
         run: curl --fail http://localhost:3001/api/v1/health
@@ -26,5 +26,5 @@ jobs:
       - name: Teardown
         if: always()
         run: |
-          docker compose -f docker-compose.ci.yml logs keto-granola-server
+          docker compose -f docker-compose.ci.yml logs keto-granola-app
           docker compose -f docker-compose.ci.yml down -v
