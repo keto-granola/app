@@ -12,8 +12,9 @@ import (
 
 const (
 	EnvironmentDevelopment Environment = "development"
-	EnvironmentProduction  Environment = "production"
 	EnvironmentTest        Environment = "test"
+	EnvironmentStaging     Environment = "staging"
+	EnvironmentProduction  Environment = "production"
 	EnvironmentCI          Environment = "ci"
 
 	APIPrefix   = "api"
@@ -46,8 +47,9 @@ type Environment string
 
 var validEnvironments = []Environment{
 	EnvironmentDevelopment,
-	EnvironmentProduction,
 	EnvironmentTest,
+	EnvironmentStaging,
+	EnvironmentProduction,
 	EnvironmentCI,
 }
 
@@ -87,7 +89,7 @@ func ParseEnv() (*App, error) {
 
 	environment := Environment(envVars["ENVIRONMENT"])
 	if !slices.Contains(validEnvironments, environment) {
-		return nil, errors.New("ENVIRONMENT should be one of development|production|test|ci")
+		return nil, errors.New("ENVIRONMENT should be one of development|test|staging|production|ci")
 	}
 
 	return &App{
