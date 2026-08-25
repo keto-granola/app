@@ -14,6 +14,7 @@ import (
 
 	"github.com/keto-granola/keto-granola/internal/admin"
 	"github.com/keto-granola/keto-granola/internal/config"
+	"github.com/keto-granola/keto-granola/internal/mcp"
 	"github.com/keto-granola/keto-granola/internal/middleware"
 	productadmin "github.com/keto-granola/keto-granola/internal/product/admin"
 	productweb "github.com/keto-granola/keto-granola/internal/product/web"
@@ -56,10 +57,20 @@ type Handlers struct {
 	Admin   *admin.Handler
 }
 
+type routeConfig struct {
+	apiPublicGrp  *echo.Group
+	apiPrivateGrp *echo.Group
+	webGrp        *echo.Group
+	mcpGrp        *echo.Group
+	handlers      *Handlers
+	store         *store.Store
+	mcpServer     *mcp.Server
+}
+
 //go:embed templates
 var templateFS embed.FS
 
-func New(ctx context.Context, deps *Dependencies) (*Server, error) {
+func New(ctx context.Context, deps *Dependencies, mcpAuthToken string) (*Server, error) {
 	e := echo.New()
 	NewValidator(e)
 	e.HideBanner = true // prevents startup banner from being logged
@@ -79,22 +90,29 @@ func New(ctx context.Context, deps *Dependencies) (*Server, error) {
 		},
 	)))
 
-	web := e.Group("")
-	api := e.Group(config.APIBasePath)
-
-	apiPublic := api.Group("")
-	apiPrivate := api.Group("")
+	webGrp := e.Group("")
+	mcpGroup := e.Group("/mcp")
+	apiGrp := e.Group(config.APIBasePath)
+	apiPublicGrp := apiGrp.Group("")
+	apiPrivateGrp := apiGrp.Group("")
 
 	if deps.Environment == config.EnvironmentTest {
-		apiPrivate.Use(middleware.TestAuth)
+		apiPrivateGrp.Use(middleware.TestAuth)
 	} else {
-		apiPrivate.Use(
-			func(next echo.HandlerFunc) echo.HandlerFunc {
-				return middleware.Auth(next, deps.AuthProvider)
-			})
+		apiPrivateGrp.Use(middleware.Auth(deps.AuthProvider))
 	}
 
-	if err := registerRoutes(apiPublic, apiPrivate, web, deps.Handlers, deps.DataStore); err != nil {
+	mcpGroup.Use(mcp.RequireMCPToken(mcpAuthToken))
+
+	if err := registerRoutes(&routeConfig{
+		apiPublicGrp:  apiPublicGrp,
+		apiPrivateGrp: apiPrivateGrp,
+		webGrp:        webGrp,
+		mcpGrp:        mcpGroup,
+		store:         deps.DataStore,
+		handlers:      deps.Handlers,
+		mcpServer:     mcp.NewServer(),
+	}); err != nil {
 		return nil, err
 	}
 

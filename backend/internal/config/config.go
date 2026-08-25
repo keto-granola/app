@@ -29,18 +29,15 @@ type App struct {
 	LogLevel    slog.Level
 	Environment Environment
 	Auth        *Auth
-}
-
-type Config struct {
-	AuthOverride     *map[string]interface{} `json:"databaseAuthVariableOverride"`
-	DatabaseURL      string                  `json:"databaseURL"`
-	ProjectID        string                  `json:"projectId"`
-	ServiceAccountID string                  `json:"serviceAccountId"`
-	StorageBucket    string                  `json:"storageBucket"`
+	MCP         *MCP
 }
 
 type Auth struct {
 	Credentials string
+}
+
+type MCP struct {
+	AuthToken string
 }
 
 type Environment string
@@ -72,6 +69,7 @@ func ParseEnv() (*App, error) {
 		"CLIENT_URL":     "",
 		"ENVIRONMENT":    "",
 		"FIREBASE_CREDS": "",
+		"MCP_AUTH_TOKEN": "",
 	}
 
 	for key := range envVars {
@@ -100,6 +98,9 @@ func ParseEnv() (*App, error) {
 		Environment: environment,
 		Auth: &Auth{
 			Credentials: envVars["FIREBASE_CREDS"],
+		},
+		MCP: &MCP{
+			AuthToken: envVars["MCP_AUTH_TOKEN"],
 		},
 	}, nil
 }

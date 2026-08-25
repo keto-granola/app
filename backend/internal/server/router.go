@@ -8,22 +8,25 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/keto-granola/keto-granola/internal/mcp"
 	"github.com/keto-granola/keto-granola/internal/store"
 	"github.com/keto-granola/keto-granola/internal/webassets"
 )
 
 const pingTimeout = 5 * time.Second
 
-func registerRoutes(apiPublic, apiPrivate, web *echo.Group, handlers *Handlers, dataStore *store.Store) error {
-	registerHealthEndpoint(apiPublic, dataStore)
+func registerRoutes(cfg *routeConfig) error {
+	registerHealthEndpoint(cfg.apiPublicGrp, cfg.store)
 
-	if err := registerAssetRoutes(web); err != nil {
+	if err := registerAssetRoutes(cfg.webGrp); err != nil {
 		return err
 	}
 
-	registerAPIRoutes(apiPrivate, handlers)
+	registerMcpGroups(cfg.mcpGrp, cfg.mcpServer)
 
-	registerWebRoutes(web, handlers)
+	registerAPIRoutes(cfg.apiPrivateGrp, cfg.handlers)
+
+	registerWebRoutes(cfg.webGrp, cfg.handlers)
 
 	return nil
 }
@@ -58,6 +61,10 @@ func registerAssetRoutes(web *echo.Group) error {
 	web.GET("/assets/*", echo.WrapHandler(http.StripPrefix("/assets/", handler)))
 
 	return nil
+}
+
+func registerMcpGroups(mcp *echo.Group, server *mcp.Server) {
+	mcp.Any("", server.ServeHTTP)
 }
 
 func registerAPIRoutes(apiPrivate *echo.Group, handlers *Handlers) {
