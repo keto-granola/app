@@ -46,7 +46,6 @@ func Auth(authProvider auth.AuthProvider) echo.MiddlewareFunc {
 			return next(e)
 		}
 	}
-
 }
 
 func TestAuth(next echo.HandlerFunc) echo.HandlerFunc {

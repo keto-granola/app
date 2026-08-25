@@ -3,8 +3,9 @@ package mcp
 import (
 	"crypto/subtle"
 
-	"github.com/keto-granola/keto-granola/internal/apperr"
 	"github.com/labstack/echo/v4"
+
+	"github.com/keto-granola/keto-granola/internal/apperr"
 )
 
 func RequireMCPToken(token string) echo.MiddlewareFunc {

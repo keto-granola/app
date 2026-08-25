@@ -63,8 +63,8 @@ func registerAssetRoutes(web *echo.Group) error {
 	return nil
 }
 
-func registerMcpGroups(mcp *echo.Group, server *mcp.Server) {
-	mcp.Any("", server.ServeHTTP)
+func registerMcpGroups(mcpGrp *echo.Group, server *mcp.Server) {
+	mcpGrp.Any("", server.ServeHTTP)
 }
 
 func registerAPIRoutes(apiPrivate *echo.Group, handlers *Handlers) {
