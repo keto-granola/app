@@ -82,7 +82,7 @@ func run() error {
 		serverDeps.AuthProvider = authProvider
 	}
 
-	echo, err := server.New(ctx, serverDeps)
+	echo, err := server.New(ctx, serverDeps, cfg.MCP.AuthToken)
 	if err != nil {
 		return err
 	}
