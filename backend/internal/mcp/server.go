@@ -3,13 +3,15 @@ package mcp
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/mark3labs/mcp-go/server"
+
+	inventoryadmin "github.com/keto-granola/keto-granola/internal/inventory/admin"
 )
 
 type Server struct {
 	streamable *server.StreamableHTTPServer
 }
 
-func NewServer() *Server {
+func NewServer(inventoryAdminService *inventoryadmin.Service) *Server {
 	s := server.NewMCPServer(
 		"keto-granola-store",
 		"1.0.0",
@@ -17,7 +19,7 @@ func NewServer() *Server {
 		server.WithRecovery(),
 	)
 
-	registerInventoryTools()
+	registerInventoryTools(s, inventoryAdminService)
 
 	return &Server{
 		streamable: server.NewStreamableHTTPServer(s),

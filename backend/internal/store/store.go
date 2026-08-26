@@ -64,12 +64,12 @@ func (s *Store) Close() {
 	s.pool.Close()
 }
 
-func ExecQuery[T any](ctx context.Context, query func() (T, error)) (T, error) {
+func ExecWithResult[T any](ctx context.Context, query func() (T, error)) (T, error) {
 	return utils.RetryWithExponentialBackoff(ctx, query, dbMaxRetries, dbBaseDelay, isRetryableDbError)
 }
 
-func ExecCommand(ctx context.Context, command func() error) error {
-	_, err := ExecQuery(ctx, func() (*struct{}, error) { return nil, command() })
+func ExecNoResult(ctx context.Context, command func() error) error {
+	_, err := ExecWithResult(ctx, func() (*struct{}, error) { return nil, command() })
 	return err
 }
 

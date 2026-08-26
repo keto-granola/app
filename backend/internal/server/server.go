@@ -14,6 +14,7 @@ import (
 
 	"github.com/keto-granola/keto-granola/internal/admin"
 	"github.com/keto-granola/keto-granola/internal/config"
+	inventoryadmin "github.com/keto-granola/keto-granola/internal/inventory/admin"
 	"github.com/keto-granola/keto-granola/internal/mcp"
 	"github.com/keto-granola/keto-granola/internal/middleware"
 	productadmin "github.com/keto-granola/keto-granola/internal/product/admin"
@@ -37,11 +38,12 @@ const (
 )
 
 type Dependencies struct {
-	Environment  config.Environment
-	ClientURL    string
-	Handlers     *Handlers
-	DataStore    *store.Store
-	AuthProvider auth.AuthProvider
+	Environment           config.Environment
+	ClientURL             string
+	Handlers              *Handlers
+	DataStore             *store.Store
+	AuthProvider          auth.AuthProvider
+	InventoryAdminService *inventoryadmin.Service
 }
 
 type Server struct {
@@ -111,7 +113,7 @@ func New(ctx context.Context, deps *Dependencies, mcpAuthToken string) (*Server,
 		mcpGrp:        mcpGroup,
 		store:         deps.DataStore,
 		handlers:      deps.Handlers,
-		mcpServer:     mcp.NewServer(),
+		mcpServer:     mcp.NewServer(deps.InventoryAdminService),
 	}); err != nil {
 		return nil, err
 	}

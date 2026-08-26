@@ -30,7 +30,7 @@ func (s *Store) InsertProduct(ctx context.Context, params *admin.CreateProductPa
 		return nil, err
 	}
 
-	row, err := store.ExecQuery(ctx, func() (generated.InsertProductRow, error) {
+	row, err := store.ExecWithResult(ctx, func() (generated.InsertProductRow, error) {
 		return s.queries.InsertProduct(ctx, *insertParams)
 	})
 
@@ -95,7 +95,7 @@ func insertedProductFrom(row *generated.InsertProductRow) (*product.Product, err
 }
 
 func (s *Store) GetProduct(ctx context.Context, id pgtype.UUID) (*product.Product, error) {
-	row, err := store.ExecQuery(ctx, func() (generated.GetProductRow, error) {
+	row, err := store.ExecWithResult(ctx, func() (generated.GetProductRow, error) {
 		return s.queries.GetProduct(ctx, id)
 	})
 
