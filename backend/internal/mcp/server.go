@@ -1,9 +1,10 @@
 package mcp
 
 import (
-	inventoryadmin "github.com/keto-granola/keto-granola/internal/inventory/admin"
 	"github.com/labstack/echo/v4"
 	"github.com/mark3labs/mcp-go/server"
+
+	inventoryadmin "github.com/keto-granola/keto-granola/internal/inventory/admin"
 )
 
 type Server struct {

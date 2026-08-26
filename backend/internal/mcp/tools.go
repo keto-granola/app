@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/keto-granola/keto-granola/internal/inventory/admin"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
+
+	"github.com/keto-granola/keto-granola/internal/inventory/admin"
 )
 
-func registerInventoryTools(server *server.MCPServer, service *admin.Service) {
+func registerInventoryTools(s *server.MCPServer, service *admin.Service) {
 	handler := func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		products, err := service.GetLowStock(ctx)
 		if err != nil {
@@ -20,9 +21,12 @@ func registerInventoryTools(server *server.MCPServer, service *admin.Service) {
 		return mcp.NewToolResultText(productsFrom(products)), nil
 	}
 
-	server.AddTool(
+	s.AddTool(
 		mcp.NewTool("get_low_stock_products",
-			mcp.WithDescription("Returns products where stock is below restock threshold. Use when the user asks about restocking or low inventory."),
+			mcp.WithDescription(`
+				Returns products where stock is below restock threshold. 
+				Use when the user asks about restocking or low inventory.
+			`),
 		),
 		handler,
 	)
