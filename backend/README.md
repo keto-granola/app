@@ -58,6 +58,10 @@ make sqlc
 make migrate/create name=<migration_name>
 ```
 
+### Run db migrations:
+
+Restart the server to apply migrations automatically.
+
 ### Generate mocks:
 ```
 make mocks
