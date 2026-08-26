@@ -4,6 +4,7 @@ sql:
     schema: "internal/store/db/schema.sql"
     queries:
       - "internal/product/store/query/"
+      - "internal/inventory/store/query"
     gen:
       go:
         package: "generated"

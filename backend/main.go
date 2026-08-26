@@ -11,6 +11,8 @@ import (
 
 	"github.com/keto-granola/keto-granola/internal/admin"
 	"github.com/keto-granola/keto-granola/internal/config"
+	inventoryadmin "github.com/keto-granola/keto-granola/internal/inventory/admin"
+	inventoryStore "github.com/keto-granola/keto-granola/internal/inventory/store"
 	"github.com/keto-granola/keto-granola/internal/product"
 	productadmin "github.com/keto-granola/keto-granola/internal/product/admin"
 	productstore "github.com/keto-granola/keto-granola/internal/product/store"
@@ -67,10 +69,11 @@ func run() error {
 	)
 
 	serverDeps := &server.Dependencies{
-		Environment: cfg.Environment,
-		ClientURL:   cfg.ClientURL,
-		Handlers:    handlers,
-		DataStore:   dataStore,
+		Environment:           cfg.Environment,
+		ClientURL:             cfg.ClientURL,
+		Handlers:              handlers,
+		DataStore:             dataStore,
+		InventoryAdminService: inventoryadmin.NewService(inventoryStore.New(dataStore.Queries)),
 	}
 
 	if cfg.Environment != config.EnvironmentCI {

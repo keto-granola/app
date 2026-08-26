@@ -59,11 +59,12 @@ func (ns NullOrderStatus) Value() (driver.Value, error) {
 }
 
 type Inventory struct {
-	ID        pgtype.UUID
-	CreatedAt pgtype.Timestamptz
-	UpdatedAt pgtype.Timestamptz
-	ProductID pgtype.UUID
-	Quantity  int32
+	ID               pgtype.UUID
+	CreatedAt        pgtype.Timestamptz
+	UpdatedAt        pgtype.Timestamptz
+	ProductID        pgtype.UUID
+	Quantity         int32
+	RestockThreshold int32
 }
 
 type Order struct {

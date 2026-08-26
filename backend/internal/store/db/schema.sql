@@ -69,5 +69,6 @@ CREATE TABLE inventory (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-  quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0)
+  quantity INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
+  restock_threshold INTEGER NOT NULL CHECK (restock_threshold > 0)
 );

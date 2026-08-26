@@ -61,6 +61,7 @@ make migrate/create name=<migration_name>
 ### Run db migrations:
 
 Restart the server to apply migrations automatically.
+Update `./internal/store/db/schema.sql` so sqlc has the latest db schema.
 
 ### Generate mocks:
 ```

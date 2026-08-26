@@ -14,6 +14,7 @@ import (
 
 	"github.com/keto-granola/keto-granola/internal/admin"
 	"github.com/keto-granola/keto-granola/internal/config"
+	inventoryadmin "github.com/keto-granola/keto-granola/internal/inventory/admin"
 	"github.com/keto-granola/keto-granola/internal/mcp"
 	"github.com/keto-granola/keto-granola/internal/middleware"
 	productadmin "github.com/keto-granola/keto-granola/internal/product/admin"
@@ -37,11 +38,12 @@ const (
 )
 
 type Dependencies struct {
-	Environment  config.Environment
-	ClientURL    string
-	Handlers     *Handlers
-	DataStore    *store.Store
-	AuthProvider auth.AuthProvider
+	Environment           config.Environment
+	ClientURL             string
+	Handlers              *Handlers
+	DataStore             *store.Store
+	AuthProvider          auth.AuthProvider
+	InventoryAdminService *inventoryadmin.Service
 }
 
 type Server struct {
@@ -58,13 +60,13 @@ type Handlers struct {
 }
 
 type routeConfig struct {
-	apiPublicGrp  *echo.Group
-	apiPrivateGrp *echo.Group
-	webGrp        *echo.Group
-	mcpGrp        *echo.Group
-	handlers      *Handlers
-	store         *store.Store
-	mcpServer     *mcp.Server
+	apiPublicGrp          *echo.Group
+	apiPrivateGrp         *echo.Group
+	webGrp                *echo.Group
+	mcpGrp                *echo.Group
+	handlers              *Handlers
+	store                 *store.Store
+	mcpServer             *mcp.Server
 }
 
 //go:embed templates
@@ -105,13 +107,13 @@ func New(ctx context.Context, deps *Dependencies, mcpAuthToken string) (*Server,
 	mcpGroup.Use(mcp.RequireMCPToken(mcpAuthToken))
 
 	if err := registerRoutes(&routeConfig{
-		apiPublicGrp:  apiPublicGrp,
-		apiPrivateGrp: apiPrivateGrp,
-		webGrp:        webGrp,
-		mcpGrp:        mcpGroup,
-		store:         deps.DataStore,
-		handlers:      deps.Handlers,
-		mcpServer:     mcp.NewServer(),
+		apiPublicGrp:          apiPublicGrp,
+		apiPrivateGrp:         apiPrivateGrp,
+		webGrp:                webGrp,
+		mcpGrp:                mcpGroup,
+		store:                 deps.DataStore,
+		handlers:              deps.Handlers,
+		mcpServer:             mcp.NewServer(deps.InventoryAdminService),
 	}); err != nil {
 		return nil, err
 	}
